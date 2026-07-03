@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  POM padre / agregador de la prueba técnica.
+  Centraliza versiones (BOM de Spring Boot vía parent), la versión de Java
+  y el dependencyManagement de los artefactos compartidos.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.3</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.acme</groupId>
+    <artifactId>prueba-tecnica</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Prueba Técnica :: Parent</name>
+    <description>Arquitectura multi-módulo: librería de autenticación + aplicación web ZK</description>
+
+    <modules>
+        <module>user-auth-library</module>
+        <module>web-app</module>
+    </modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <!-- Línea 3.5.x de zkspringboot, alineada con Spring Boot 3.5 -->
+        <zkspringboot.version>3.5.13</zkspringboot.version>
+        <archunit.version>1.4.1</archunit.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.acme</groupId>
+                <artifactId>user-auth-library</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.zkoss.zkspringboot</groupId>
+                <artifactId>zkspringboot-starter</artifactId>
+                <version>${zkspringboot.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit</artifactId>
+                <version>${archunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <!-- Los artefactos ZK CE se publican en el repositorio propio de ZK -->
+        <repository>
+            <id>zk-ce</id>
+            <name>ZK CE Repository</name>
+            <url>https://mavensync.zkoss.org/maven2</url>
+        </repository>
+    </repositories>
+</project>

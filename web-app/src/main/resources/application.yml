@@ -1,0 +1,71 @@
+# Configuración de la web-app.
+# Credenciales y URLs se externalizan a variables de entorno; los valores
+# por defecto sirven solo para desarrollo local.
+spring:
+  application:
+    name: web-app
+
+  # ──────────────────────────────────────────────────────────────────────
+  # CONEXIÓN A BASE DE DATOS — ⚠️ CAMBIAR AL USAR
+  #
+  # La base de datos debe existir antes de arrancar (ver
+  # scripts/01_create_database.sql); las tablas las crea Flyway solo.
+  #
+  # Los valores tras los dos puntos son SOLO para desarrollo local. Ajusta:
+  #   - username/password: los de tu instalación de PostgreSQL, o los del
+  #     usuario dedicado si usaste la Opción B del script.
+  #   - url: host/puerto/nombre de BD si difieren de localhost:5432.
+  #
+  # Forma recomendada de cambiarlos SIN tocar este archivo: variables de
+  # entorno DB_URL, DB_USERNAME y DB_PASSWORD (nunca subas contraseñas
+  # reales al repositorio).
+  # ──────────────────────────────────────────────────────────────────────
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/prueba_tecnica}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # El esquema lo gobierna Flyway; Hibernate solo valida que coincide
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration/userauth # migraciones de user-auth-library (V1–V99)
+      - classpath:db/migration          # migraciones propias de la web-app (V100+)
+
+  autoconfigure:
+    # Sin esto, Boot generaría un usuario en memoria con contraseña aleatoria
+    # que no usamos: la autenticación la hace user-auth-library.
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+# Librería de autenticación
+userauth:
+  bcrypt-strength: 12
+
+# Administrador inicial: se crea automáticamente SOLO si la tabla de usuarios
+# está vacía (primer arranque). ⚠️ CAMBIAR AL USAR en un entorno real:
+# define BOOTSTRAP_ADMIN_PASSWORD con una contraseña propia, o cambia la del
+# admin desde la propia aplicación tras el primer inicio de sesión.
+app:
+  bootstrap-admin:
+    username: ${BOOTSTRAP_ADMIN_USERNAME:admin}
+    email: ${BOOTSTRAP_ADMIN_EMAIL:admin@acme.local}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:Admin1234}
+
+# Integración ZK (zkspringboot-starter)
+zk:
+  homepage: user/user-list
+  zul-view-resolver-prefix: /zul
+  zul-view-resolver-suffix: .zul
+
+server:
+  port: 8080

@@ -1,0 +1,31 @@
+<?page title="Iniciar sesión"?>
+<?link rel="stylesheet" type="text/css" href="/css/app.css"?>
+<!--
+  Página pública de login (MVVM). El envío con Enter funciona en ambos
+  campos vía onOK.
+-->
+<zk>
+    <div sclass="login-page" apply="org.zkoss.bind.BindComposer"
+         viewModel="@id('vm') @init('com.acme.webapp.presentation.viewmodel.auth.LoginViewModel')">
+
+        <vlayout sclass="login-card" spacing="12px">
+            <label value="Prueba Técnica" sclass="login-title"/>
+            <label value="Inicia sesión para administrar usuarios" sclass="login-subtitle"/>
+
+            <vlayout spacing="4px">
+                <label value="Usuario" sclass="field-label"/>
+                <textbox value="@bind(vm.username)" hflex="1" sclass="login-input"
+                         onOK="@command('login')"/>
+            </vlayout>
+
+            <vlayout spacing="4px">
+                <label value="Contraseña" sclass="field-label"/>
+                <textbox type="password" value="@bind(vm.password)" hflex="1" sclass="login-input"
+                         onOK="@command('login')"/>
+            </vlayout>
+
+            <button label="Entrar" onClick="@command('login')" hflex="1"
+                    sclass="btn btn-primary login-button"/>
+        </vlayout>
+    </div>
+</zk>

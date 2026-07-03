@@ -1,0 +1,67 @@
+<?page title="Gestión de usuarios"?>
+<?link rel="stylesheet" type="text/css" href="/css/app.css"?>
+<!--
+  Listado CRUD de usuarios (patrón MVVM).
+  La vista es puramente declarativa: todo el comportamiento se delega en
+  UserListViewModel a través de @command; aquí no hay ni una línea de lógica.
+-->
+<zk>
+    <div sclass="page" apply="org.zkoss.bind.BindComposer"
+         viewModel="@id('vm') @init('com.acme.webapp.presentation.viewmodel.user.UserListViewModel')">
+
+        <hlayout sclass="header-bar" valign="middle" spacing="8px">
+            <vlayout spacing="2px" hflex="1">
+                <label value="Usuarios" sclass="page-title"/>
+                <label value="Alta, consulta y administración de cuentas" sclass="page-subtitle"/>
+            </vlayout>
+            <label value="@load(vm.currentUsername)" sclass="header-user"/>
+            <button label="Mi contraseña" onClick="@command('openMyPassword')" sclass="btn btn-sm"/>
+            <button label="Cerrar sesión" onClick="@command('logout')" sclass="btn btn-sm"/>
+        </hlayout>
+
+        <hlayout sclass="toolbar" valign="middle" spacing="8px">
+            <textbox value="@bind(vm.filter)" placeholder="Buscar por usuario o correo…"
+                     sclass="search-box" hflex="1"
+                     onOK="@command('search')" instant="true"/>
+            <button label="Buscar" onClick="@command('search')" sclass="btn"/>
+            <button label="Nuevo usuario" onClick="@command('openCreateForm')" sclass="btn btn-primary"/>
+        </hlayout>
+
+        <listbox model="@load(vm.users)" sclass="user-table" hflex="1"
+                 emptyMessage="No hay usuarios que coincidan con la búsqueda.">
+            <listhead sizable="true">
+                <listheader label="Usuario" hflex="2"/>
+                <listheader label="Correo" hflex="3"/>
+                <listheader label="Roles" hflex="2"/>
+                <listheader label="Estado" hflex="1" align="center"/>
+                <listheader label="Alta" hflex="2" align="center"/>
+                <listheader label="Acciones" hflex="3" align="center"/>
+            </listhead>
+            <template name="model" var="user">
+                <listitem>
+                    <listcell label="@load(user.username)"/>
+                    <listcell label="@load(user.email)"/>
+                    <listcell label="@load(user.rolesLabel)"/>
+                    <listcell>
+                        <label value="@load(user.enabled ? 'Activo' : 'Inactivo')"
+                               sclass="@load(user.enabled ? 'badge badge-active' : 'badge badge-disabled')"/>
+                    </listcell>
+                    <listcell label="@load(user.createdAtLabel)"/>
+                    <listcell sclass="row-actions">
+                        <button label="Restablecer" sclass="btn btn-sm"
+                                tooltiptext="Restablecer contraseña (admin)"
+                                onClick="@command('openResetPassword', user=user)"/>
+                        <button label="@load(user.enabled ? 'Desactivar' : 'Activar')" sclass="btn btn-sm"
+                                onClick="@command('toggleEnabled', user=user)"/>
+                        <button label="Eliminar" sclass="btn btn-sm btn-danger"
+                                onClick="@command('confirmDelete', user=user)"/>
+                    </listcell>
+                </listitem>
+            </template>
+        </listbox>
+
+        <paging totalSize="@load(vm.total)" pageSize="@load(vm.pageSize)"
+                activePage="@bind(vm.activePage)" onPaging="@command('paginate')"
+                detailed="true" sclass="table-paging"/>
+    </div>
+</zk>

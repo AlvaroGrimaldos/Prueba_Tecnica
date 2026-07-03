@@ -1,0 +1,53 @@
+<!--
+  Diálogo modal de alta de usuario (MVVM).
+  Los "constraint" de ZK dan feedback inmediato en cliente; la validación
+  de verdad (Bean Validation + value objects) ocurre en el backend.
+-->
+<zk>
+    <window title="Nuevo usuario" mode="modal" closable="true" border="normal"
+            width="440px" sclass="dialog"
+            apply="org.zkoss.bind.BindComposer"
+            viewModel="@id('vm') @init('com.acme.webapp.presentation.viewmodel.user.UserFormViewModel')">
+
+        <grid sclass="form-grid">
+            <columns>
+                <column width="150px"/>
+                <column/>
+            </columns>
+            <rows>
+                <row>
+                    <label value="Usuario"/>
+                    <textbox value="@bind(vm.form.username)" hflex="1"
+                             constraint="no empty: El nombre de usuario es obligatorio"/>
+                </row>
+                <row>
+                    <label value="Correo"/>
+                    <textbox value="@bind(vm.form.email)" hflex="1"
+                             constraint="no empty: El correo es obligatorio"/>
+                </row>
+                <row>
+                    <label value="Contraseña"/>
+                    <textbox type="password" value="@bind(vm.form.password)" hflex="1"
+                             constraint="no empty: La contraseña es obligatoria"/>
+                </row>
+                <row>
+                    <label value="Confirmación"/>
+                    <textbox type="password" value="@bind(vm.form.confirmPassword)" hflex="1"
+                             constraint="no empty: Repite la contraseña"/>
+                </row>
+                <row>
+                    <label value="Roles"/>
+                    <hlayout spacing="16px">
+                        <checkbox label="Usuario" checked="@bind(vm.form.standardUser)"/>
+                        <checkbox label="Administrador" checked="@bind(vm.form.admin)"/>
+                    </hlayout>
+                </row>
+            </rows>
+        </grid>
+
+        <div sclass="dialog-actions">
+            <button label="Cancelar" onClick="@command('close')" sclass="btn"/>
+            <button label="Guardar" onClick="@command('save')" sclass="btn btn-primary"/>
+        </div>
+    </window>
+</zk>

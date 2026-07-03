@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  web-app: aplicación web ZK que consume user-auth-library.
+  Jar ejecutable de Spring Boot (repackage).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.acme</groupId>
+        <artifactId>prueba-tecnica</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>web-app</artifactId>
+    <name>Prueba Técnica :: Web App</name>
+    <description>Aplicación web ZK de gestión de usuarios</description>
+
+    <dependencies>
+        <!-- Librería propia de autenticación/usuarios -->
+        <dependency>
+            <groupId>com.acme</groupId>
+            <artifactId>user-auth-library</artifactId>
+        </dependency>
+
+        <!-- ZK sobre Spring Boot (trae zkbind, zul, zkplus…) -->
+        <dependency>
+            <groupId>org.zkoss.zkspringboot</groupId>
+            <artifactId>zkspringboot-starter</artifactId>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Migraciones de esquema -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!-- Driver PostgreSQL: decisión de la aplicación, no de la librería -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

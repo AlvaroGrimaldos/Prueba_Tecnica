@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configuración de ZK para empaquetado jar (classpath: metainfo/zk/zk.xml).
+-->
+<zk>
+    <!-- Sin comprobación de timestamps de zul en producción -->
+    <client-config>
+        <processing-prompt-delay>500</processing-prompt-delay>
+    </client-config>
+
+    <!-- Los errores no controlados se registran en el log del servidor -->
+    <log>
+        <log-base>org.zkoss</log-base>
+    </log>
+</zk>
