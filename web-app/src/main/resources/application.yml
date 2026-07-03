@@ -37,9 +37,11 @@ spring:
 
   flyway:
     enabled: true
+    # Flyway escanea recursivamente: encuentra tanto las migraciones de
+    # user-auth-library (db/migration/userauth, V1–V99) como las propias de
+    # la web-app (db/migration, V100+) desde la ubicación raíz.
     locations:
-      - classpath:db/migration/userauth # migraciones de user-auth-library (V1–V99)
-      - classpath:db/migration          # migraciones propias de la web-app (V100+)
+      - classpath:db/migration
 
   autoconfigure:
     # Sin esto, Boot generaría un usuario en memoria con contraseña aleatoria
@@ -61,11 +63,12 @@ app:
     email: ${BOOTSTRAP_ADMIN_EMAIL:admin@acme.local}
     password: ${BOOTSTRAP_ADMIN_PASSWORD:Admin1234}
 
-# Integración ZK (zkspringboot-starter)
+# Integración ZK (zkspringboot-starter, empaquetado jar)
+# El resolutor de vistas antepone /zkau/web/ a los nombres de vista: las
+# .zul del classpath (src/main/resources/web/) se sirven por esa ruta interna.
+# El nombre de vista va SIN barra inicial (evita // que rechaza el firewall).
 zk:
-  homepage: user/user-list
-  zul-view-resolver-prefix: /zul
-  zul-view-resolver-suffix: .zul
+  homepage: zul/user/user-list
 
 server:
   port: 8080

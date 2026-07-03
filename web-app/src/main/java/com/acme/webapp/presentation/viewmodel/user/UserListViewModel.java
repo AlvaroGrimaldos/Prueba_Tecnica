@@ -42,9 +42,11 @@ public class UserListViewModel {
     /** Comando global que refresca el listado desde cualquier diálogo. */
     public static final String GC_REFRESH_USERS = "refreshUsers";
 
-    private static final String USER_FORM_ZUL = "/zul/user/user-form.zul";
-    private static final String RESET_PASSWORD_ZUL = "/zul/user/reset-password.zul";
-    private static final String CHANGE_PASSWORD_ZUL = "/zul/user/change-password.zul";
+    // Prefijo ~./ = recurso del classpath (src/main/resources/web/), la forma
+    // correcta de referenciar zul internos en empaquetado jar
+    private static final String USER_FORM_ZUL = "~./zul/user/user-form.zul";
+    private static final String RESET_PASSWORD_ZUL = "~./zul/user/reset-password.zul";
+    private static final String CHANGE_PASSWORD_ZUL = "~./zul/user/change-password.zul";
     private static final int PAGE_SIZE = 10;
 
     @WireVariable("userService")

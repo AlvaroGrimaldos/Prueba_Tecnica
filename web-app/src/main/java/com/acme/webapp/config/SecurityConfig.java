@@ -15,31 +15,36 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
  * {@code PasswordAuthenticator} de user-auth-library, y aquí solo se
  * gobiernan la autorización de URLs y el punto de entrada.
  * <p>
- * Notas:
- * <ul>
- *   <li>{@code /zkau/**} (motor AU de ZK) se permite y se excluye de CSRF:
- *       toda la interacción de un desktop ZK viaja por ahí y ZK aplica su
- *       propio control por identificadores de desktop/página. La seguridad
- *       de URL protege la <em>creación</em> de cada página.</li>
- *   <li>Las páginas de administración ({@code /zul/user/**}) exigen rol
- *       {@code ADMIN}.</li>
- * </ul>
+ * Detalle importante del empaquetado jar de ZK: las vistas .zul se sirven
+ * bajo {@code /zkau/web/...} (a donde hacen forward las URLs amigables como
+ * {@code /} o {@code /login}). El forward interno no pasa por el filtro de
+ * seguridad, pero esas rutas también son accesibles por petición directa,
+ * así que se protegen explícitamente: sin la regla sobre
+ * {@code /zkau/web/zul/**}, un anónimo podría abrir el CRUD escribiendo la
+ * URL interna a mano.
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /** Página de login ZK; pública por definición. */
-    public static final String LOGIN_PAGE = "/zul/auth/login.zul";
+    /** URL pública de login (view controller definido en {@link WebConfig}). */
+    public static final String LOGIN_PAGE = "/login";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // El motor AU de ZK enruta la interacción de los desktops por
+                // /zkau con su propio control por identificadores de desktop;
+                // el CSRF de Spring Security aplica al resto (no hay forms HTML).
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/zkau/**"))
                 .authorizeHttpRequests(auth -> auth
+                        // Página de login, también por su ruta interna directa
+                        .requestMatchers(LOGIN_PAGE, "/zkau/web/zul/auth/**").permitAll()
+                        // Ningún otro .zul de la aplicación sin rol ADMIN
+                        .requestMatchers("/zkau/web/zul/**").hasRole("ADMIN")
+                        // Motor AU + recursos estáticos de ZK (js/css bajo /zkau/web/js…)
                         .requestMatchers("/zkau/**", "/css/**", "/favicon.ico", "/error").permitAll()
-                        .requestMatchers(LOGIN_PAGE).permitAll()
-                        .requestMatchers("/zul/user/**").hasRole("ADMIN")
+                        // Resto (p. ej. "/" → homepage): autenticado
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(LOGIN_PAGE)));
